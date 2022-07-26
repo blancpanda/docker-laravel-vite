@@ -126,10 +126,9 @@ export default defineConfig({
 
 ```
 
-:::note info
-laravel-vite-plugin の処理で、Vite 開発サーバ起動時に laravel/public/hot ファイルが作成される。
+参考)  
+laravel-vite-plugin の処理で、Vite 開発サーバ起動時に laravel/public/hot ファイルが作成される。  
 hot ファイル内のURLをベースとしてアセットのロードが行われるのだが、コンテナ間とブラウザからのアクセスの両方に対応するには http://0.0.0.0:3000 が hot ファイルに出力される必要がある。
-:::
 
 
 ## 本番環境用にビルドする
