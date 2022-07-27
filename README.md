@@ -22,8 +22,7 @@ docker compose down
 
 ### Compose ファイルの切り替えについて
 
-開発時は docker-compose.override.yml が自動で適用されるので node コンテナで Vite の開発サーバが起動した状態になる
-
+開発時は docker-compose.override.yml が自動で適用されるので node コンテナで Vite の開発サーバが起動した状態になる  
 vue ファイルの変更が即時反映されるようになる
 
 ### コマンドのショートカット
@@ -85,6 +84,28 @@ app コンテナでマイグレーション
 bin/artisan migrate
 ```
 
+## vite.config.js について
+
+Vite の開発サーバは node コンテナで起動するが、他のコンテナからアクセスできるように設定する必要がある。  
+Laravel インストール後に修正する。
+
+```js:vite.config.js
+// ...
+export default defineConfig({
+  plugins: [
+    // ...
+  ],
+  server: {
+    host: '0.0.0.0',    // 別コンテナからのアクセスを可能にする
+  },
+})
+
+```
+
+参考)  
+laravel-vite-plugin の処理で、Vite 開発サーバ起動時に laravel/public/hot ファイルが作成される。  
+hot ファイル内のURLをベースとしてアセットのロードが行われるのだが、コンテナ間とブラウザからのアクセスの両方に対応するには http://0.0.0.0:3000 が hot ファイルに出力される必要がある。
+
 ## Laravel をこの Docker 構成ごと git 管理下においた場合の clone からの再構築
 
 ※ [repository], [project-dir] は各環境に置き換える
@@ -108,28 +129,6 @@ docker compose up -d
 ```
 
 （少し待ってから） http://localhost:8080/ にアクセスして起動を確認
-
-## vite.config.js について
-
-Vite の開発サーバは node コンテナで起動するが、他のコンテナからアクセスできるように設定する必要がある。
-
-```js:vite.config.js
-// ...
-export default defineConfig({
-  plugins: [
-    // ...
-  ],
-  server: {
-    host: '0.0.0.0',    // 別コンテナからのアクセスを可能にする
-  },
-})
-
-```
-
-参考)  
-laravel-vite-plugin の処理で、Vite 開発サーバ起動時に laravel/public/hot ファイルが作成される。  
-hot ファイル内のURLをベースとしてアセットのロードが行われるのだが、コンテナ間とブラウザからのアクセスの両方に対応するには http://0.0.0.0:3000 が hot ファイルに出力される必要がある。
-
 
 ## 本番環境用にビルドする
 
